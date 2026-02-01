@@ -1,11 +1,17 @@
 mod domain;
 mod adapters;
+mod cli;
 
+use clap::Parser;
+use crate::cli::Args;
 use crate::domain::dto::FileDTO;
 use crate::domain::service::{track_file, remove, list};
 use crate::adapters::repository::LocalRepositoty;
 
 fn main() {
+    let args = Args::parse();
+
+
     let local_repository = LocalRepositoty;
 
     let first_file_dto = FileDTO{id: "1".to_string(), path: "first/path".to_string()};
