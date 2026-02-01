@@ -1,5 +1,5 @@
 use crate::domain::repository::FileRepository;
-use crate::domain::file::FileEntity;
+use crate::domain::entity::FileEntity;
 
 pub struct LocalRepositoty;
 

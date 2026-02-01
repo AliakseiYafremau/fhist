@@ -1,4 +1,4 @@
-use crate::domain::file::FileEntity;
+use crate::domain::entity::FileEntity;
 
 pub struct FileDTO {
     pub id: String,
