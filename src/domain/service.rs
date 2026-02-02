@@ -1,14 +1,15 @@
 use crate::domain::dto::{FileDTO, map_to_file_dto};
 use crate::domain::factory::build_file;
-use crate::domain::repository::FileRepository;
+use crate::domain::repository::{FileRepository, SnapshotRepository};
 
-pub fn track_file(file_dto: FileDTO, repository: &impl FileRepository) {
+pub fn start_track_file(file_dto: FileDTO, repository: &impl FileRepository) {
     let file_to_track = build_file(file_dto.id, file_dto.path);
     repository.track(file_to_track);
 }
 
-pub fn remove(id_path: String, repository: &impl FileRepository) {
-    repository.remove(id_path);
+pub fn stop_to_track_file(id_path: String, file_repository: &impl FileRepository, snap_repository: &impl SnapshotRepository) {
+    snap_repository.delete_by_file_id_path(&id_path);
+    file_repository.remove(&id_path);
 }
 
 pub fn list(repository: &impl FileRepository) -> Vec<FileDTO> {
@@ -21,3 +22,7 @@ pub fn list(repository: &impl FileRepository) -> Vec<FileDTO> {
 
     file_dtos
 }
+
+// pub fn add_snapshot(id_path: String, ) {
+
+// }

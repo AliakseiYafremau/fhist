@@ -3,18 +3,18 @@ mod cli;
 mod data_management;
 mod domain;
 
-use std::io::Error;
 use clap::Parser;
+use std::io::Error;
 
 use crate::domain::dto::FileDTO;
-use crate::domain::service::{list, remove, track_file};
+use crate::domain::service::{list, stop_to_track_file, start_track_file};
 
 use crate::adapters::repository::LocalRepositoty;
 
 use crate::cli::Args;
 use crate::data_management::ensure_dir;
 
-fn main() -> Result<(), Error>{
+fn main() -> Result<(), Error> {
     ensure_dir()?;
 
     let args = Args::parse();
@@ -30,11 +30,11 @@ fn main() -> Result<(), Error>{
         path: "second/path".to_string(),
     };
 
-    track_file(first_file_dto, &local_repository);
-    track_file(second_file_dto, &local_repository);
+    start_track_file(first_file_dto, &local_repository);
+    start_track_file(second_file_dto, &local_repository);
 
-    remove("1 id".to_string(), &local_repository);
-    remove("2 path".to_string(), &local_repository);
+    stop_to_track_file("1 id".to_string(), &local_repository);
+    stop_to_track_file("2 path".to_string(), &local_repository);
 
     list(&local_repository);
     list(&local_repository);
