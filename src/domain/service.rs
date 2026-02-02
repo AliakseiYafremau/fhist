@@ -2,7 +2,6 @@ use crate::domain::dto::{FileDTO, map_to_file_dto};
 use crate::domain::factory::build_file;
 use crate::domain::repository::FileRepository;
 
-
 pub fn track_file(file_dto: FileDTO, repository: &impl FileRepository) {
     let file_to_track = build_file(file_dto.id, file_dto.path);
     repository.track(file_to_track);

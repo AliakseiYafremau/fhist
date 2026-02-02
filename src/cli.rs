@@ -1,8 +1,13 @@
 use clap::{Parser, Subcommand, ValueEnum, builder::Str};
 
 #[derive(Parser)]
-#[command(name = "fhist", version, about = "File history tracker", long_about = "Track changes of files and view their history from the terminal.\n\
-A minimal utility to subscribe to files and inspect how they evolve.")]
+#[command(
+    name = "fhist",
+    version,
+    about = "File history tracker",
+    long_about = "Track changes of files and view their history from the terminal.\n\
+A minimal utility to subscribe to files and inspect how they evolve."
+)]
 pub struct Args {
     #[command(subcommand)]
     command: Commands,
@@ -11,15 +16,15 @@ pub struct Args {
 #[derive(Subcommand, Clone)]
 enum Commands {
     /// Add a file to be tracked.
-    /// 
+    ///
     /// Example:
     ///     fhist add notes.txt
     Add {
         /// Path to file
-        target: String
+        target: String,
     },
     /// Stop tracking a file.
-    /// 
+    ///
     /// You can pass either an ID from `fhist list`
     /// or the original file path.
     Remove {
@@ -32,6 +37,6 @@ enum Commands {
     /// Show the history of changes for a specific tracked file
     Log {
         /// File if or path
-        target: String
+        target: String,
     },
 }

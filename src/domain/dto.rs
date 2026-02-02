@@ -6,5 +6,8 @@ pub struct FileDTO {
 }
 
 pub fn map_to_file_dto(file_entity: FileEntity) -> FileDTO {
-    FileDTO { id: file_entity.id, path: file_entity.path }
+    FileDTO {
+        id: file_entity.id,
+        path: file_entity.path,
+    }
 }
