@@ -4,8 +4,8 @@ Tool that provides a simple way to track and manage file history on your local m
 
 ## Commands
 
-- `fhist help`: Display a short description, available commands and examples. ❌
-- `fhist version`: Show the current version of the tool. ❌
+- `fhist help`: Display a short description, available commands and examples. ✅
+- `fhist --version`: Show the current version of the tool. ✅
 
 - `fhist add <file_path>`: Add a file to be tracked. ❌
 - `fhist remove <id|file_path>`: Stop tracking a file. ❌

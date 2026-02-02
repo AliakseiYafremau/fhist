@@ -10,9 +10,6 @@ pub struct Args {
 
 #[derive(Subcommand, Clone)]
 enum Commands {
-    /// Show the current version of the tool.
-    Version,
-
     /// Add a file to be tracked.
     /// 
     /// Example:
