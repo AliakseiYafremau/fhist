@@ -1,14 +1,22 @@
 mod adapters;
 mod cli;
+mod data_management;
 mod domain;
 
-use crate::adapters::repository::LocalRepositoty;
-use crate::cli::Args;
-use crate::domain::dto::FileDTO;
-use crate::domain::service::{list, remove, track_file};
+use std::io::Error;
 use clap::Parser;
 
-fn main() {
+use crate::domain::dto::FileDTO;
+use crate::domain::service::{list, remove, track_file};
+
+use crate::adapters::repository::LocalRepositoty;
+
+use crate::cli::Args;
+use crate::data_management::ensure_dir;
+
+fn main() -> Result<(), Error>{
+    ensure_dir()?;
+
     let args = Args::parse();
 
     let local_repository = LocalRepositoty;
@@ -30,4 +38,6 @@ fn main() {
 
     list(&local_repository);
     list(&local_repository);
+
+    Ok(())
 }
