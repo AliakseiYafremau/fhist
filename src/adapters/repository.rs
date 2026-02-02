@@ -1,11 +1,14 @@
 use std::fs::File;
 
-use crate::domain::entity::FileEntity;
-use crate::domain::repository::FileRepository;
+use chrono::Utc;
 
-pub struct LocalRepositoty;
+use crate::domain::entity::{FileEntity, SnapshotEntity};
+use crate::domain::repository::{FileRepository, SnapshotRepository};
 
-impl FileRepository for LocalRepositoty {
+pub struct LocalFileRepositoty;
+pub struct LocalSnapshotRepository;
+
+impl FileRepository for LocalFileRepositoty {
     fn track(&self, file: FileEntity) {
         println!("File with path \"{}\" was tracked", file.path);
     }
@@ -25,6 +28,27 @@ impl FileRepository for LocalRepositoty {
         vec![FileEntity {
             id: "id example".to_string(),
             path: "path example".to_string(),
+        }]
+    }
+}
+
+impl SnapshotRepository for LocalSnapshotRepository {
+    fn delete_by_file_id_path(&self, file_id_path: &str) {
+        println!("Snapshots for file \"{}\" were deleted", file_id_path);
+    }
+
+    fn add(&self, file_id_path: &str, snapshot: String) {
+        println!(
+            "Snapshot \"{}\" was added for file \"{}\"",
+            snapshot, file_id_path
+        );
+    }
+
+    fn get_by_id_or_path(&self, file_id_path: &str) -> Vec<SnapshotEntity> {
+        println!("Snapshots for file \"{}\" were requested", file_id_path);
+        vec![SnapshotEntity {
+            id: "id example".to_string(),
+            date: Utc::now(),
         }]
     }
 }
