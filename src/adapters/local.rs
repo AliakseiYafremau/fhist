@@ -18,7 +18,7 @@ impl FileRepository for LocalFileRepositoty {
     fn update(&self, file: FileEntity) {
         println!("File with id\"{}\" was updated", file.id);
     }
-    fn get_by_id_or_path(&self, id_path: &str) -> FileEntity{
+    fn get_by_id_or_path(&self, id_path: &str) -> FileEntity {
         FileEntity {
             id: "id example".to_string(),
             path: "path example".to_string(),

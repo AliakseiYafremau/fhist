@@ -1,22 +1,28 @@
-use std::{fs, io::Error, path::PathBuf};
+use std::{
+    fs,
+    io::{Error, ErrorKind},
+    path::PathBuf,
+};
 
 use directories::ProjectDirs;
 
-fn get_dir() -> Option<PathBuf> {
+pub fn get_dir() -> Result<PathBuf, Error> {
     let proj = ProjectDirs::from("com", "fhist", "fhist");
 
     let data_path = if let Some(project) = proj {
         project.data_dir().to_path_buf()
     } else {
-        return None;
+        return Err(Error::new(
+            ErrorKind::NotFound,
+            "project directory not available",
+        ));
     };
 
-    Some(data_path)
+    Ok(data_path)
 }
 
 pub fn ensure_dir() -> Result<(), Error> {
-    if let Some(data_path) = get_dir() {
-        fs::create_dir_all(&data_path)?;
-    }
+    let data_path = get_dir()?;
+    fs::create_dir_all(&data_path)?;
     Ok(())
 }
