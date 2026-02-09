@@ -1,9 +1,13 @@
+use uuid::Uuid;
+
+use crate::domain::uuid_util::uuid_to_str;
 use crate::domain::dto::{FileDTO, map_to_file_dto};
 use crate::domain::factory::build_file;
 use crate::domain::repository::{FileRepository, SnapshotRepository};
 
-pub fn start_track_file(file_dto: FileDTO, repository: &impl FileRepository) {
-    let file_to_track = build_file(file_dto.id, file_dto.path);
+pub fn start_track_file(file_path: &str, repository: &impl FileRepository) {
+    let file_id = uuid_to_str(Uuid::new_v4());
+    let file_to_track = build_file(&file_id, file_path);
     repository.track(file_to_track);
 }
 
@@ -27,6 +31,6 @@ pub fn list(repository: &impl FileRepository) -> Vec<FileDTO> {
     file_dtos
 }
 
-pub fn add_snapshot(file_id_path: String, snapshot: String, repository: &impl SnapshotRepository) {
-    repository.add(&file_id_path, snapshot);
+pub fn add_snapshot(file_id_path: &str, snapshot: String, repository: &impl SnapshotRepository) {
+    repository.add(file_id_path, snapshot);
 }

@@ -4,12 +4,10 @@ mod data_management;
 mod domain;
 
 use clap::Parser;
-use rusqlite::Connection;
 
-use crate::adapters::local::LocalSnapshotRepository;
-use crate::adapters::sql::SQLFileRepository;
-use crate::cli::Args;
-use crate::data_management::{ensure_dir, get_dir};
+use crate::adapters::local::{self, LocalFileRepositoty, LocalSnapshotRepository};
+use crate::cli::{Args, Commands};
+use crate::domain::service::{list, start_track_file, stop_to_track_file};
 
 #[derive(Debug)]
 enum AppError {
@@ -32,15 +30,28 @@ impl From<rusqlite::Error> for AppError {
 type AppResult<T> = Result<T, AppError>;
 
 fn main() -> AppResult<()> {
-    ensure_dir()?;
-    let data_dir = get_dir()?;
+    // // ensure_dir()?;
+    // let data_dir = get_dir()?;
 
-    let _args = Args::parse();
+    let args = Args::parse();
 
-    let connection = Connection::open(&data_dir)?;
+    // let connection = Connection::open(&data_dir)?;
+    // let _sql_file_repository = SQLFileRepository { connection };
 
-    let _local_file_repository = SQLFileRepository { connection };
-    let _local_snapshot_repository = LocalSnapshotRepository;
+    let local_file_repository = LocalFileRepositoty;
+    let local_snapshot_repository = LocalSnapshotRepository;
+
+    match args.command {
+        Commands::Add { target } => start_track_file(&target, &local_file_repository),
+        Commands::Remove { target } => stop_to_track_file(&target, &local_file_repository, &local_snapshot_repository),
+        Commands::List => {
+            let files = list(&local_file_repository);
+            for file in files {
+                println!("File: id - {}, path - {}", file.id, file.path);
+            }
+        }
+        Commands::Log { target } => println!("Not implemented"),
+    }
 
     Ok(())
 }

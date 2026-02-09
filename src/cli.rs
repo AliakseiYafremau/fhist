@@ -10,11 +10,11 @@ A minimal utility to subscribe to files and inspect how they evolve."
 )]
 pub struct Args {
     #[command(subcommand)]
-    command: Commands,
+    pub command: Commands,
 }
 
 #[derive(Subcommand, Clone)]
-enum Commands {
+pub enum Commands {
     /// Add a file to be tracked.
     ///
     /// Example:
