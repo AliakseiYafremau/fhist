@@ -1,7 +1,7 @@
 use uuid::Uuid;
 
+use crate::domain::entity::FileEntity;
 use crate::domain::uuid_util::uuid_to_str;
-use crate::domain::dto::{FileDTO, map_to_file_dto};
 use crate::domain::factory::build_file;
 use crate::domain::repository::{FileRepository, SnapshotRepository};
 
@@ -20,16 +20,15 @@ pub fn stop_to_track_file(
     file_repository.remove(id_path);
 }
 
-pub fn list(repository: &impl FileRepository) -> Vec<FileDTO> {
+pub fn list(repository: &impl FileRepository) -> Vec<FileEntity> {
     let file_entities = repository.list();
 
-    let mut file_dtos = Vec::with_capacity(file_entities.len());
-    for entity in file_entities {
-        file_dtos.push(map_to_file_dto(entity));
-    }
-
-    file_dtos
+    file_entities
 }
+
+// pub fn get_info(file_id_path: &str) ->  {
+
+// }
 
 pub fn add_snapshot(file_id_path: &str, snapshot: String, repository: &impl SnapshotRepository) {
     repository.add(file_id_path, snapshot);
