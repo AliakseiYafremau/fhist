@@ -1,11 +1,11 @@
-use std::fs::File;
-
 use chrono::Utc;
 
 use crate::domain::entity::{FileEntity, SnapshotEntity};
 use crate::domain::repository::{FileRepository, SnapshotRepository};
 
+#[allow(dead_code)]
 pub struct LocalFileRepositoty;
+#[allow(dead_code)]
 pub struct LocalSnapshotRepository;
 
 impl FileRepository for LocalFileRepositoty {
@@ -18,7 +18,7 @@ impl FileRepository for LocalFileRepositoty {
     fn update(&self, file: FileEntity) {
         println!("File with id\"{}\" was updated", file.id);
     }
-    fn get_by_id_or_path(&self, id_path: &str) -> FileEntity {
+    fn get_by_id_or_path(&self, _id_path: &str) -> FileEntity {
         FileEntity {
             id: "id example".to_string(),
             path: "path example".to_string(),

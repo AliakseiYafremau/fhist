@@ -5,10 +5,14 @@ mod domain;
 
 use clap::Parser;
 
-use crate::adapters::local::{self, LocalFileRepositoty, LocalSnapshotRepository};
+use rusqlite::Connection;
+
+use crate::adapters::sql::{SQLFileRepository, SQLSnapshotRepository};
 use crate::cli::{Args, Commands};
+use crate::data_management::{ensure_dir, get_dir};
 use crate::domain::service::{list, start_track_file, stop_to_track_file};
 
+#[allow(dead_code)]
 #[derive(Debug)]
 enum AppError {
     Io(std::io::Error),
@@ -30,27 +34,33 @@ impl From<rusqlite::Error> for AppError {
 type AppResult<T> = Result<T, AppError>;
 
 fn main() -> AppResult<()> {
-    // // ensure_dir()?;
-    // let data_dir = get_dir()?;
-
     let args = Args::parse();
 
-    // let connection = Connection::open(&data_dir)?;
-    // let _sql_file_repository = SQLFileRepository { connection };
+    ensure_dir()?;
+    let data_dir = get_dir()?;
+    let db_path = data_dir.join("fhist.sqlite");
 
-    let local_file_repository = LocalFileRepositoty;
-    let local_snapshot_repository = LocalSnapshotRepository;
+    let file_connection = Connection::open(&db_path)?;
+    let snapshot_connection = Connection::open(&db_path)?;
+    let sql_file_repository = SQLFileRepository {
+        connection: file_connection,
+    };
+    let sql_snapshot_repository = SQLSnapshotRepository {
+        connection: snapshot_connection,
+    };
 
     match args.command {
-        Commands::Add { target } => start_track_file(&target, &local_file_repository),
-        Commands::Remove { target } => stop_to_track_file(&target, &local_file_repository, &local_snapshot_repository),
+        Commands::Add { target } => start_track_file(&target, &sql_file_repository),
+        Commands::Remove { target } => {
+            stop_to_track_file(&target, &sql_file_repository, &sql_snapshot_repository)
+        }
         Commands::List => {
-            let files = list(&local_file_repository);
+            let files = list(&sql_file_repository);
             for file in files {
                 println!("File: id - {}, path - {}", file.id, file.path);
             }
         }
-        Commands::Log { target } => println!("Not implemented"),
+        Commands::Log { target: _ } => println!("Not implemented"),
     }
 
     Ok(())
