@@ -2,7 +2,6 @@
 
 use chrono::{DateTime, Utc};
 use rusqlite::{params, Connection, OptionalExtension};
-use uuid::Uuid;
 
 use crate::domain::entity::{FileEntity, SnapshotEntity};
 use crate::domain::repository::{FileRepository, SnapshotRepository};
@@ -120,7 +119,7 @@ impl FileRepository for SQLFileRepository {
 }
 
 impl SnapshotRepository for SQLSnapshotRepository {
-    fn delete_by_file_id_path(&self, file_id_path: &str) {
+    fn delete_all_by_file_id_path(&self, file_id_path: &str) {
         ensure_schema(&self.connection);
         let Some(file_id) = get_file_id(&self.connection, file_id_path) else {
             return;
@@ -133,17 +132,24 @@ impl SnapshotRepository for SQLSnapshotRepository {
             .expect("failed to delete snapshots");
     }
 
-    fn add(&self, file_id_path: &str, snapshot: String) {
+    fn delete_by_snapshot_id(&self, snapshot_id: &str) {
+        ensure_schema(&self.connection);
+        self.connection
+            .execute("DELETE FROM snapshots WHERE id = ?1", params![snapshot_id])
+            .expect("failed to delete snapshot");
+    }
+
+    fn add(&self, file_id_path: &str, snapshot: SnapshotEntity) {
         ensure_schema(&self.connection);
         let Some(file_id) = get_file_id(&self.connection, file_id_path) else {
             return;
         };
-        let snapshot_id = Uuid::new_v4().to_string();
-        let date = Utc::now().to_rfc3339();
+        let snapshot_id = snapshot.id;
+        let date = snapshot.date.to_rfc3339();
         self.connection
             .execute(
                 "INSERT INTO snapshots (id, file_id, date, content) VALUES (?1, ?2, ?3, ?4)",
-                params![snapshot_id, file_id, date, snapshot],
+                params![snapshot_id, file_id, date, snapshot.content],
             )
             .expect("failed to insert snapshot");
     }
@@ -155,7 +161,7 @@ impl SnapshotRepository for SQLSnapshotRepository {
         };
         let mut stmt = self
             .connection
-            .prepare("SELECT id, date FROM snapshots WHERE file_id = ?1 ORDER BY date")
+            .prepare("SELECT id, date, content FROM snapshots WHERE file_id = ?1 ORDER BY date")
             .expect("failed to prepare snapshot list query");
         let rows = stmt
             .query_map(params![file_id], |row| {
@@ -163,6 +169,7 @@ impl SnapshotRepository for SQLSnapshotRepository {
                 Ok(SnapshotEntity {
                     id: row.get(0)?,
                     date: parse_datetime(date_str),
+                    content: row.get(2)?,
                 })
             })
             .expect("failed to read snapshots");

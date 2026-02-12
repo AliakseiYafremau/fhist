@@ -8,4 +8,5 @@ pub struct FileEntity {
 pub struct SnapshotEntity {
     pub id: String,
     pub date: DateTime<Utc>,
+    pub content: String,
 }

@@ -2,6 +2,7 @@ mod adapters;
 mod cli;
 mod data_management;
 mod domain;
+mod output;
 
 use clap::Parser;
 
@@ -11,6 +12,7 @@ use crate::adapters::sql::{SQLFileRepository, SQLSnapshotRepository};
 use crate::cli::{Args, Commands};
 use crate::data_management::{ensure_dir, get_dir};
 use crate::domain::service::{get_info, list, start_track_file, stop_to_track_file};
+use crate::output::{output_file_info, output_snapshot_info};
 
 #[allow(dead_code)]
 #[derive(Debug)]
@@ -57,16 +59,15 @@ fn main() -> AppResult<()> {
         Commands::List => {
             let files = list(&sql_file_repository);
             for file in files {
-                println!("FILE\n\tID   | {}\n\tPATH | {}", file.id, file.path);
+                output_file_info(&file.id, &file.path);
             }
         } 
-       
         Commands::Log { target } => {
             let log = get_info(&target, &sql_file_repository, &sql_snapshot_repository);
 
-            println!("FILE\n\tID   | {}\n\tPATH | {}", log.file_id, log.file_path);
+            output_file_info(&log.file_id, &log.file_path);
             for snapshot in log.snapshots {
-                println!("Snapshot: id - {}, time - {}", snapshot.id, snapshot.date);
+                output_snapshot_info(&snapshot.id, snapshot.date, &snapshot.content);
             }
         },
     }

@@ -1,9 +1,10 @@
+use chrono::Utc;
 use uuid::Uuid;
 
 use crate::domain::dto::LogDTO;
 use crate::domain::entity::FileEntity;
-use crate::domain::uuid_util::uuid_to_str;
-use crate::domain::factory::build_file;
+use crate::domain::uuid_util::{uuid_generate, uuid_to_str};
+use crate::domain::factory::{build_file, build_snapshot};
 use crate::domain::repository::{FileRepository, SnapshotRepository};
 
 pub fn start_track_file(file_path: &str, repository: &impl FileRepository) {
@@ -17,7 +18,7 @@ pub fn stop_to_track_file(
     file_repository: &impl FileRepository,
     snap_repository: &impl SnapshotRepository,
 ) {
-    snap_repository.delete_by_file_id_path(id_path);
+    snap_repository.delete_all_by_file_id_path(id_path);
     file_repository.remove(id_path);
 }
 
@@ -34,6 +35,18 @@ pub fn get_info(file_id_path: &str, file_repository: &impl FileRepository, snap_
     LogDTO { file_id: file_entity.id, file_path: file_entity.path, snapshots: file_snapshots }
 }
 
-pub fn add_snapshot(file_id_path: &str, snapshot: String, repository: &impl SnapshotRepository) {
-    repository.add(file_id_path, snapshot);
+pub fn add_snapshot(
+    file_id_path: &str,
+    content: &str,
+    snap_repository: &impl SnapshotRepository,
+) {
+    let snapshot = build_snapshot(&uuid_generate(), Utc::now(), content);
+    snap_repository.add(file_id_path, snapshot);
+}
+
+pub fn remove_snapshot(
+    snapshot_id: &str,
+    snap_repository: &impl SnapshotRepository,
+) {
+    snap_repository.delete_by_snapshot_id(snapshot_id);
 }

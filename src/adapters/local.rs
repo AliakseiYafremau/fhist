@@ -33,14 +33,18 @@ impl FileRepository for LocalFileRepositoty {
 }
 
 impl SnapshotRepository for LocalSnapshotRepository {
-    fn delete_by_file_id_path(&self, file_id_path: &str) {
+    fn delete_all_by_file_id_path(&self, file_id_path: &str) {
         println!("Snapshots for file \"{}\" were deleted", file_id_path);
     }
 
-    fn add(&self, file_id_path: &str, snapshot: String) {
+    fn delete_by_snapshot_id(&self, snapshot_id: &str) {
+        println!("Snapshot \"{}\" was deleted", snapshot_id);
+    }
+
+    fn add(&self, file_id_path: &str, snapshot: SnapshotEntity) {
         println!(
-            "Snapshot \"{}\" was added for file \"{}\"",
-            snapshot, file_id_path
+            "Snapshot \"{}\" was added for file \"{}\" at {}",
+            snapshot.id, file_id_path, snapshot.date
         );
     }
 
@@ -49,6 +53,7 @@ impl SnapshotRepository for LocalSnapshotRepository {
         vec![SnapshotEntity {
             id: "id example".to_string(),
             date: Utc::now(),
+            content: "content example".to_string(),
         }]
     }
 }

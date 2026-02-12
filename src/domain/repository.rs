@@ -9,7 +9,8 @@ pub trait FileRepository {
 }
 
 pub trait SnapshotRepository {
-    fn delete_by_file_id_path(&self, file_id_path: &str);
-    fn add(&self, file_id_path: &str, snapshot: String);
+    fn delete_all_by_file_id_path(&self, file_id_path: &str);
+    fn delete_by_snapshot_id(&self, snapshot_id: &str);
+    fn add(&self, file_id_path: &str, snapshot: SnapshotEntity);
     fn get_by_id_or_path(&self, file_id_path: &str) -> Vec<SnapshotEntity>;
 }
