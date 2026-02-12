@@ -10,7 +10,7 @@ use rusqlite::Connection;
 use crate::adapters::sql::{SQLFileRepository, SQLSnapshotRepository};
 use crate::cli::{Args, Commands};
 use crate::data_management::{ensure_dir, get_dir};
-use crate::domain::service::{list, start_track_file, stop_to_track_file};
+use crate::domain::service::{get_info, list, start_track_file, stop_to_track_file};
 
 #[allow(dead_code)]
 #[derive(Debug)]
@@ -57,10 +57,18 @@ fn main() -> AppResult<()> {
         Commands::List => {
             let files = list(&sql_file_repository);
             for file in files {
-                println!("File: id - {}, path - {}", file.id, file.path);
+                println!("FILE\n\tID   | {}\n\tPATH | {}", file.id, file.path);
             }
-        }
-        Commands::Log { target: _ } => println!("Not implemented"),
+        } 
+       
+        Commands::Log { target } => {
+            let log = get_info(&target, &sql_file_repository, &sql_snapshot_repository);
+
+            println!("FILE\n\tID   | {}\n\tPATH | {}", log.file_id, log.file_path);
+            for snapshot in log.snapshots {
+                println!("Snapshot: id - {}, time - {}", snapshot.id, snapshot.date);
+            }
+        },
     }
 
     Ok(())

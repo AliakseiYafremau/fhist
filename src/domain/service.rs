@@ -1,5 +1,6 @@
 use uuid::Uuid;
 
+use crate::domain::dto::LogDTO;
 use crate::domain::entity::FileEntity;
 use crate::domain::uuid_util::uuid_to_str;
 use crate::domain::factory::build_file;
@@ -26,9 +27,12 @@ pub fn list(repository: &impl FileRepository) -> Vec<FileEntity> {
     file_entities
 }
 
-// pub fn get_info(file_id_path: &str) ->  {
+pub fn get_info(file_id_path: &str, file_repository: &impl FileRepository, snap_repository: &impl SnapshotRepository) -> LogDTO {
+    let file_entity = file_repository.get_by_id_or_path(file_id_path);
+    let file_snapshots = snap_repository.get_by_id_or_path(&file_entity.id);
 
-// }
+    LogDTO { file_id: file_entity.id, file_path: file_entity.path, snapshots: file_snapshots }
+}
 
 pub fn add_snapshot(file_id_path: &str, snapshot: String, repository: &impl SnapshotRepository) {
     repository.add(file_id_path, snapshot);
