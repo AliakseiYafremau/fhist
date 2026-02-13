@@ -7,6 +7,9 @@ mod output;
 use clap::Parser;
 
 use rusqlite::Connection;
+// use std::path::Path;
+// use std::sync::mpsc::channel;
+// use notify::{Event, RecursiveMode, Watcher, recommended_watcher};
 
 use crate::adapters::sql::{SQLFileRepository, SQLSnapshotRepository};
 use crate::cli::{Args, Commands};
@@ -19,6 +22,7 @@ use crate::output::{output_file_info, output_snapshot_info};
 enum AppError {
     Io(std::io::Error),
     Db(rusqlite::Error),
+    No(notify::Error),
 }
 
 impl From<std::io::Error> for AppError {
@@ -33,9 +37,20 @@ impl From<rusqlite::Error> for AppError {
     }
 }
 
+impl From<notify::Error> for AppError {
+    fn from(e: notify::Error) -> Self {
+        AppError::No(e)
+    }
+}
+
 type AppResult<T> = Result<T, AppError>;
 
 fn main() -> AppResult<()> {
+    // let (tx, rx) = channel::<notify::Result<Event>>();
+
+    // let mut watcher = recommended_watcher(tx)?;
+    // watcher.watch(Path::new(s), recursive_mode);
+
     let args = Args::parse();
 
     ensure_dir()?;

@@ -7,5 +7,6 @@ edition = "2024"
 chrono = "0.4.43"
 clap = { version = "4.5.56", features = ["derive"] }
 directories = "6.0.0"
+notify = "8.2.0"
 rusqlite = { version = "0.38.0", features = ["bundled"] }
 uuid = { version = "1.20.0", features = ["v4"] }
