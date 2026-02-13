@@ -1,6 +1,5 @@
 use uuid::Uuid;
 
-
 pub fn uuid_to_str(uuid: Uuid) -> String {
     uuid.to_string()
 }

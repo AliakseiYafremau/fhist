@@ -1,7 +1,7 @@
 #![allow(dead_code)]
 
 use chrono::{DateTime, Utc};
-use rusqlite::{params, Connection, OptionalExtension};
+use rusqlite::{Connection, OptionalExtension, params};
 
 use crate::domain::entity::{FileEntity, SnapshotEntity};
 use crate::domain::repository::{FileRepository, SnapshotRepository};
@@ -125,10 +125,7 @@ impl SnapshotRepository for SQLSnapshotRepository {
             return;
         };
         self.connection
-            .execute(
-                "DELETE FROM snapshots WHERE file_id = ?1",
-                params![file_id],
-            )
+            .execute("DELETE FROM snapshots WHERE file_id = ?1", params![file_id])
             .expect("failed to delete snapshots");
     }
 

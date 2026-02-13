@@ -76,7 +76,7 @@ fn main() -> AppResult<()> {
             for file in files {
                 output_file_info(&file.id, &file.path);
             }
-        } 
+        }
         Commands::Log { target } => {
             let log = get_info(&target, &sql_file_repository, &sql_snapshot_repository);
 
@@ -84,7 +84,7 @@ fn main() -> AppResult<()> {
             for snapshot in log.snapshots {
                 output_snapshot_info(&snapshot.id, snapshot.date, &snapshot.content);
             }
-        },
+        }
     }
 
     Ok(())
