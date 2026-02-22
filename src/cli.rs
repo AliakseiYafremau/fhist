@@ -39,4 +39,8 @@ pub enum Commands {
         /// File if or path
         target: String,
     },
+    /// Watch tracked files and write snapshots on every change.
+    Watch,
+    /// Run a background daemon that keeps watching tracked files.
+    Daemon,
 }

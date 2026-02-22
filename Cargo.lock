@@ -206,6 +206,7 @@ dependencies = [
  "chrono",
  "clap",
  "directories",
+ "libc",
  "notify",
  "rusqlite",
  "uuid",
