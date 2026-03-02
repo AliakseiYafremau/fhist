@@ -96,13 +96,13 @@ fn main() -> AppResult<()> {
                 output_file_info(&file.id, &file.path);
             }
         }
-        Commands::Log { target } => {
+        Commands::Log { target, verbose } => {
             let resolved = resolve_path(&target);
             let log = get_info(&resolved, &sql_file_repository, &sql_snapshot_repository);
 
             output_file_info(&log.file_id, &log.file_path);
             for snapshot in log.snapshots {
-                output_snapshot_info(&snapshot.id, snapshot.date, &snapshot.content);
+                output_snapshot_info(&snapshot.id, snapshot.date, &snapshot.content, verbose);
             }
         }
     }

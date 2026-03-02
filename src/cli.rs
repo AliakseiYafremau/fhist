@@ -38,5 +38,8 @@ pub enum Commands {
     Log {
         /// File if or path
         target: String,
+        /// Show snapshot content
+        #[arg(short, long)]
+        verbose: bool,
     },
 }
