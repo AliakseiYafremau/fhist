@@ -12,3 +12,5 @@ Tool that provides a simple way to track and manage file history on your local m
 
 - `fhist list`: List all tracked files with their IDs and paths. ✅
 - `fhist log <id|file_id>`: Show the history of changes for a specific tracked file. ✅
+- `fhist diff <id|file_id> [--from <snapshot_id>] [--to <snapshot_id>]`: Show a diff between snapshots. ✅
+- `fhist rollback <id|file_id> [--snapshot <snapshot_id>]`: Roll back a file to a snapshot. ✅

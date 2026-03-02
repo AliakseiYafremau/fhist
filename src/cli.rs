@@ -42,4 +42,23 @@ pub enum Commands {
         #[arg(short, long)]
         verbose: bool,
     },
+    /// Show a diff between two snapshots for a tracked file
+    Diff {
+        /// File id or path
+        target: String,
+        /// Snapshot id to diff from
+        #[arg(long)]
+        from: Option<String>,
+        /// Snapshot id to diff to
+        #[arg(long)]
+        to: Option<String>,
+    },
+    /// Roll back a tracked file to a snapshot
+    Rollback {
+        /// File id or path
+        target: String,
+        /// Snapshot id to restore (defaults to latest)
+        #[arg(long)]
+        snapshot: Option<String>,
+    },
 }

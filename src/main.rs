@@ -14,9 +14,11 @@ use crate::adapters::sql::{SQLFileRepository, SQLSnapshotRepository};
 use crate::cli::{Args, Commands};
 use crate::daemon::start_background_watcher;
 use crate::data_management::{ensure_dir, get_dir};
-use crate::domain::service::{get_info, list, start_track_file, stop_to_track_file};
+use crate::domain::service::{
+    get_diff, get_info, get_rollback, list, start_track_file, stop_to_track_file,
+};
 use crate::notify_watcher::spawn_snapshot_watcher;
-use crate::output::{output_file_info, output_snapshot_info};
+use crate::output::{output_diff, output_file_info, output_rollback, output_snapshot_info};
 
 #[derive(Debug)]
 pub enum AppError {
@@ -24,6 +26,7 @@ pub enum AppError {
     Db(rusqlite::Error),
     No(notify::Error),
     Daemon(String),
+    Usage(String),
 }
 
 impl From<std::io::Error> for AppError {
@@ -104,6 +107,39 @@ fn main() -> AppResult<()> {
             for snapshot in log.snapshots {
                 output_snapshot_info(&snapshot.id, snapshot.date, &snapshot.content, verbose);
             }
+        }
+        Commands::Diff { target, from, to } => {
+            let resolved = resolve_path(&target);
+            let diff = get_diff(
+                &resolved,
+                from.as_deref(),
+                to.as_deref(),
+                &sql_file_repository,
+                &sql_snapshot_repository,
+            )
+            .map_err(AppError::Usage)?;
+            output_diff(
+                &diff.file_id,
+                &diff.file_path,
+                &diff.from.id,
+                diff.from.date,
+                &diff.from.content,
+                &diff.to.id,
+                diff.to.date,
+                &diff.to.content,
+            );
+        }
+        Commands::Rollback { target, snapshot } => {
+            let resolved = resolve_path(&target);
+            let rollback = get_rollback(
+                &resolved,
+                snapshot.as_deref(),
+                &sql_file_repository,
+                &sql_snapshot_repository,
+            )
+            .map_err(AppError::Usage)?;
+            std::fs::write(&rollback.file_path, rollback.snapshot.content).map_err(AppError::Io)?;
+            output_rollback(&rollback.file_id, &rollback.file_path, &rollback.snapshot.id);
         }
     }
 
